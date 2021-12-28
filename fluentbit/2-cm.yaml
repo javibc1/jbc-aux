@@ -61,9 +61,10 @@ data:
         port                 ${FLUENT_RSYSLOG_PORT}
         mode                 udp
         syslog_format        rfc5424
-        syslog_hostname_key  kubernetes 
-        syslog_sd_key        uls@0
-        syslog_message_key   log
+        syslog_hostname_key  log
+        # syslog_appname_key   container_name
+        syslog_sd_key        kubernetes
+        syslog_message_key   kubernetes
 
   parsers.conf: |
     [PARSER]
