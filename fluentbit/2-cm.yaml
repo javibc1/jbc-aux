@@ -51,7 +51,7 @@ data:
     [FILTER]
         Name    grep
         Match   *
-        Exclude $kubernetes['labels']['name'] httpd-example
+        Regex $kubernetes['labels']['name'] httpd-example
 
   output-syslog.conf: |
     [OUTPUT]
