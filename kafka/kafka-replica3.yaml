@@ -1,0 +1,86 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  name: replica3
+  namespace: openshift-operators
+  labels:
+    strimzi.io/cluster: my-cluster
+spec:
+  partitions: 1
+  replicas: 3
+  config:
+    retention.ms: 7200000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: kafka-pro-replica3
+  name: kafka-pro-replica3
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka-pro-replica3
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: kafka-pro-replica3
+    spec:
+      containers:
+      - env:
+        - name: BOOTSTRAP_SERVERS
+          value: my-cluster-kafka-bootstrap.openshift-operators.svc.cluster.local:9092
+        - name: TOPIC
+          value: replica3
+        - name: DELAY_MS
+          value: "1000"
+        - name: LOG_LEVEL
+          value: INFO
+        - name: MESSAGE_COUNT
+          value: "1000"
+        image: strimzi/hello-world-producer:latest
+        imagePullPolicy: Always
+        name: kafka-pro-replica3
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: kafka-con-replica3
+  name: kafka-con-replica3
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka-con-replica3
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: kafka-con-replica3
+    spec:
+      containers:
+      - env:
+        - name: BOOTSTRAP_SERVERS
+          value: my-cluster-kafka-bootstrap.openshift-operators.svc.cluster.local:9092
+        - name: TOPIC
+          value: replica3
+        - name: GROUP_ID
+          value: my-hello-world-consumer
+        - name: LOG_LEVEL
+          value: INFO
+        - name: MESSAGE_COUNT
+          value: "1000"
+        image: strimzi/hello-world-consumer:latest
+        imagePullPolicy: Always
+        name: kafka-con-replica3

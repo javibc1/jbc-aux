@@ -1,0 +1,56 @@
+# Source: chart-template/templates/svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: colectora-rsyslog
+spec:
+  selector:
+    app: colectora-rsyslog
+  type: NodePort
+  ports:
+    - name: tcp-5140
+      protocol: TCP
+      port: 5140
+      targetPort: 5140
+    - name: udp-5140
+      nodePort: 30514
+      port: 5140
+      protocol: UDP
+      targetPort: 5140
+---
+# Source: chart-template/templates/deploy.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: colectora-rsyslog
+  labels:
+    app: colectora-rsyslog
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: colectora-rsyslog
+  template:
+    metadata:
+      labels:
+        app: colectora-rsyslog
+    spec:
+      containers:
+      - name: colectora-rsyslog
+        image: pdelval/rsyslog:8.0
+        ports:
+        - containerPort: 5140
+        env:
+        volumeMounts:
+      volumes:
+---
+# Source: chart-template/templates/route.yaml
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: colectora-rsyslog
+spec:
+  host: ""
+  to:
+    kind: Service
+    name: colectora-rsyslog
