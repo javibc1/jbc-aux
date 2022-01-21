@@ -8,6 +8,7 @@ metadata:
 spec:
   partitions: 1
   replicas: 3
+  topicName: tnco-state-change
   config:
     retention.ms: 7200000
 ---
@@ -21,6 +22,7 @@ metadata:
 spec:
   partitions: 1
   replicas: 3
+  topicName: tnco-state-change
   config:
     retention.ms: 7200000
 ---
