@@ -4,7 +4,7 @@ metadata:
   name: tnco-state-change
   namespace: network-orchestration
   labels:
-    strimzi.io/cluster: iaf-system-kafka
+    strimzi.io/cluster: iaf-system
 spec:
   partitions: 1
   replicas: 3
@@ -18,7 +18,7 @@ metadata:
   name: tnco-state-change
   namespace: kafka-cluster-operator
   labels:
-    strimzi.io/cluster: mano-cluster-kafka
+    strimzi.io/cluster: mano-kafka-cluster
 spec:
   partitions: 1
   replicas: 3
