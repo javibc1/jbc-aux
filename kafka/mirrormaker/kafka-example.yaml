@@ -1,0 +1,99 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  name: tnco-state-change
+  namespace: network-orchestration
+  labels:
+    strimzi.io/cluster: iaf-system-kafka
+spec:
+  partitions: 1
+  replicas: 3
+  config:
+    retention.ms: 7200000
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  name: tnco-state-change
+  namespace: kafka-cluster-operator
+  labels:
+    strimzi.io/cluster: mano-cluster-kafka
+spec:
+  partitions: 1
+  replicas: 3
+  config:
+    retention.ms: 7200000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: kafka-producer
+  name: kafka-producer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka-producer
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: kafka-producer
+    spec:
+      containers:
+      - env:
+        - name: BOOTSTRAP_SERVERS
+          value: iaf-system-kafka-bootstrap.network-orchestration.svc.cluster.local:9092
+        - name: TOPIC
+          value: tnco-state-change
+        - name: DELAY_MS
+          value: "1000"
+        - name: LOG_LEVEL
+          value: INFO
+        - name: MESSAGE_COUNT
+          value: "1000"
+        image: strimzi/hello-world-producer:latest
+        imagePullPolicy: Always
+        name: kafka-producer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: kafka-consumer
+  name: kafka-consumer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka-consumer
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: kafka-consumer
+    spec:
+      containers:
+      - env:
+        - name: BOOTSTRAP_SERVERS
+          value: iaf-system-kafka-bootstrap.network-orchestration.svc.cluster.local:9092
+        - name: TOPIC
+          value: tnco-state-change
+        - name: GROUP_ID
+          value: my-hello-world-consumer
+        - name: LOG_LEVEL
+          value: INFO
+        - name: MESSAGE_COUNT
+          value: "1000"
+        image: strimzi/hello-world-consumer:latest
+        imagePullPolicy: Always
+        name: kafka-consumer

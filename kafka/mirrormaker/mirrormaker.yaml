@@ -1,0 +1,15 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaMirrorMaker
+metadata:
+  name: my-mirror-maker
+spec:
+  version: 3.0.0
+  replicas: 1
+  consumer:
+    bootstrapServers: 'iaf-system-kafka-bootstrap.network-orchestration.svc.cluster.local:9092'
+    groupId: my-source-group-id
+  producer:
+    bootstrapServers: 'mano-kafka-cluster-kafka-bootstrap.kafka-cluster-operator.svc.cluster.local:9092'
+  include: tnco-state-change
+  tracing:
+    type: jaeger
