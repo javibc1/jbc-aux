@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: volume-expander
+  name: volume-expander
+spec:
+  selector:
+    matchLabels:
+      app: volume-expander
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: volume-expander
+        deploymentconfig: volume-expander
+    spec:
+      serviceAccountName: default
+      securityContext:
+        {}
+      containers:
+        - name: demo-nodejs
+          securityContext:
+            {}
+          image: "quay.io/f_bernal_cerpa/demo:latest"
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {}
+          volumeMounts:
+          - mountPath: /data
+            name: expander-data
+      volumes:
+      - name: expander-data
+        persistentVolumeClaim:
+          claimName: expander-vol

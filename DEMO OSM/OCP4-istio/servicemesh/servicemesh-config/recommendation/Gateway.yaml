@@ -1,0 +1,61 @@
+### The route can be called in a loop to further testing
+# while true; do curl http://<route>; sleep .2; done
+
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: customer-gateway
+spec:
+  selector:
+    istio: ingressgateway # use istio default controller
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: customer-gateway
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - customer-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /customer
+    rewrite:
+      uri: /
+    route:
+    - destination:
+        host: customer
+        port:
+          number: 8080
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: recommendation
+spec:
+  host: recommendation
+### To change loadbalancing algorithm
+  # trafficPolicy:
+  #   loadBalancer:
+  #     simple: RANDOM
+###
+  subsets:
+  - labels:
+      version: v1
+    name: version-v1
+  - labels:
+      version: v2
+    name: version-v2
+  - labels:
+      app: recommendation
+    name: app-recommendation
+---

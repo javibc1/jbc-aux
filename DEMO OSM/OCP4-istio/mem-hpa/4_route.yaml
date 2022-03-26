@@ -1,0 +1,14 @@
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: memory-php
+  labels:
+    app: memory-php
+spec:
+  port:
+    targetPort: 8080-tcp
+  to:
+    kind: Service
+    name: memory-php
+    weight: 100
+  wildcardPolicy: None

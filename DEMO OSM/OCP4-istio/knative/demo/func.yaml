@@ -1,0 +1,10 @@
+name: demo
+namespace: ""
+runtime: node
+image: quay.io/javibc1/demo:latest
+imageDigest: sha256:6d810b0e3aafabf5a65edf11867d7ff2c62c1965b898bc27dccf93ef8936cc36
+trigger: http
+builder: quay.io/boson/faas-nodejs-builder
+builderMap:
+  default: quay.io/boson/faas-nodejs-builder
+envVars: {}

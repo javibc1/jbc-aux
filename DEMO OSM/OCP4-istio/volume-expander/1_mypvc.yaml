@@ -1,0 +1,17 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  annotations:
+    volume-expander-operator.redhat-cop.io/autoexpand: 'true'
+    volume-expander-operator.redhat-cop.io/expand-threshold-percent: "50"
+    volume-expander-operator.redhat-cop.io/expand-by-percent: "10"
+    volume-expander-operator.redhat-cop.io/polling-frequency: "30s"
+    volume-expander-operator.redhat-cop.io/expand-up-to: "20Gi"
+  name: expander-vol
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: gp2

@@ -1,0 +1,24 @@
+## VirtualService for trying retries and timeout, use the following commands to misbehave
+## oc exec -it $(oc get pods|grep recommendation-v2|awk '{ print $1 }'|head -1) -c recommendation bash 
+## curl localhost:8080/misbehave
+
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: recommendation
+spec:
+  hosts:
+  - recommendation
+  http:
+  - route:
+    - destination:
+        host: recommendation
+  ### For terminating connection after 1s  
+    # timeout: 1.000s
+  ##
+  ## For retrying after 3s timeout, up until 3 times
+    retries:
+      attempts: 3
+      perTryTimeout: 2s
+  ##
+##

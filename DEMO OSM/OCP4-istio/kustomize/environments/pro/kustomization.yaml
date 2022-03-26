@@ -1,0 +1,5 @@
+bases:
+  - ../../application
+patches:
+  - ./replica_count.yaml
+  - ./env_vars.yaml

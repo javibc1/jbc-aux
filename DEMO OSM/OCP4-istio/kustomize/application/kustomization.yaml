@@ -1,0 +1,4 @@
+resources:
+  - 1_deploy.yaml
+  - 2_svc.yaml
+  - 3_route.yaml

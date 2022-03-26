@@ -1,0 +1,8 @@
+bases:
+  - ../../application
+patches:
+  - replica_count.yaml
+# images:
+# - name: quay.io/rhdevelopers/knative-tutorial-greeter
+#   newName: quay.io/f_bernal_cerpa/alpine-node
+#   newTag: "v3"
